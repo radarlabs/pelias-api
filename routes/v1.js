@@ -6,6 +6,7 @@ const { Router } = express;
 const sorting = require('pelias-sorting');
 const elasticsearch = require('elasticsearch');
 const {all, any, not} = require('predicates');
+const fs = require('fs');
 
 // imports
 const sanitizers = requireAll(path.join(__dirname, '../sanitizer'));
@@ -206,7 +207,9 @@ function addRoutes(app, peliasConfig) {
 
   var routers = {
     index: createRouter([
-      controllers.markdownToHtml(peliasConfig.api, './public/apiDoc.md')
+      controllers.markdownToHtml(peliasConfig.api, 
+        peliasConfig.api.exposeInternalDebugTools ? './public/apiDocWithDebug.md' : './public/apiDoc.md'
+        )
     ]),
     attribution: createRouter([
       controllers.markdownToHtml(peliasConfig.api, './public/attribution.md')
@@ -343,7 +346,13 @@ function addRoutes(app, peliasConfig) {
     ]),
     status: createRouter([
       controllers.status
-    ])
+    ]),
+    buildInfo: createRouter([
+      controllers.buildInfo(peliasConfig.api, esclient)
+    ]),
+    indexStats: createRouter([
+      controllers.indexStats(peliasConfig.api, esclient)
+    ]),
   };
 
 
@@ -363,7 +372,8 @@ function addRoutes(app, peliasConfig) {
   app.get ( base + 'nearby',               routers.nearby );
 
   if (peliasConfig.api.exposeInternalDebugTools) {
-    app.use ( '/frontend',                   express.static('node_modules/pelias-compare/dist-api/'));
+    app.use ( '/frontend',                 express.static('node_modules/pelias-compare/dist-api/'));
+    app.use ( '/debug/indexStats',         routers.indexStats);
   }
 }
 
