@@ -3,8 +3,8 @@
 set -ex
 
 # CircleCI comes with pyenv
-pyenv install --skip-existing 3.5.2
-pyenv global 3.5.2
+pyenv install --skip-existing 3.6
+pyenv global 3.6
 
 # beanstalk CLI
 pip3 install --upgrade pip
