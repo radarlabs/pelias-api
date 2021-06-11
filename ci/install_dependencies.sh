@@ -2,7 +2,10 @@
 
 set -ex
 
+# CircleCI comes with pyenv
+pyenv install 3.5.2
+pyenv local 3.5.2
+
 # beanstalk CLI
-pip install typing
-pip install -U pip
-pip install awsebcli==3.17.1
+pip3 install -U pip
+pip3 install awsebcli==3.17.1
